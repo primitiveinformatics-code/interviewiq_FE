@@ -51,7 +51,7 @@ export async function registerWithPassword(email: string, password: string) {
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.detail || "Registration failed");
-  return data as { access_token: string; refresh_token: string };
+  return data as { access_token: string; refresh_token: string; must_change_password?: boolean };
 }
 
 export async function loginWithPassword(email: string, password: string) {
