@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { use, useCallback, useEffect, useRef, useState } from "react";
 import { WS_URL } from "@/lib/api";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -18,8 +18,9 @@ function fmt(secs: number) {
   return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
-export default function InterviewPage({ params }: { params: { sessionId: string } }) {
-  const sid = params.sessionId;
+export default function InterviewPage({ params }: { params: Promise<{ sessionId: string }> }) {
+  const { sessionId } = use(params);
+  const sid = sessionId;
   const MSG_KEY = `iq_msgs_${sid}`;
 
   const [messages, setMessages] = useState<Message[]>([]);
