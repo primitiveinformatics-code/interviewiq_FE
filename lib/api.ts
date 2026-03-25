@@ -279,7 +279,19 @@ export async function getReport(sessionId: string) {
     session_id: string;
     aggregate_score: number;
     question_count: number;
-    per_question_breakdown: unknown[];
+    per_question_breakdown: Array<{
+      question: string;
+      answer: string;
+      topic: string;
+      scores: {
+        overall_weighted?: number;
+        technical_accuracy?: number;
+        depth?: number;
+        problem_solving?: number;
+        feedback?: string;
+        [key: string]: number | string | undefined;
+      };
+    }>;
   }>(`/reports/${sessionId}`);
 }
 
