@@ -1,11 +1,11 @@
 "use client";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { setToken } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 
-export default function AuthCallbackPage() {
+function AuthCallbackContent() {
   const router = useRouter();
   const params = useSearchParams();
 
@@ -32,5 +32,17 @@ export default function AuthCallbackPage() {
     <div className="min-h-[80vh] flex items-center justify-center">
       <p className="text-gray-500 text-sm animate-pulse">Signing you in…</p>
     </div>
+  );
+}
+
+export default function AuthCallbackPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-[80vh] flex items-center justify-center">
+        <p className="text-gray-500 text-sm animate-pulse">Loading…</p>
+      </div>
+    }>
+      <AuthCallbackContent />
+    </Suspense>
   );
 }
