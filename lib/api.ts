@@ -95,6 +95,23 @@ export async function changePassword(currentPassword: string, newPassword: strin
   });
 }
 
+// ── Site settings (public) ────────────────────────────────────────────────────
+
+export interface ContactInfo {
+  email: string;
+  phone: string;
+  whatsapp: string;
+  whatsapp_url: string;
+  banner_message: string;
+  banner_popup_details: string;
+}
+
+export async function getContactInfo(): Promise<ContactInfo> {
+  const res = await fetch(`${API_URL}/settings/contact`);
+  if (!res.ok) throw new Error("Failed to load contact info");
+  return res.json() as Promise<ContactInfo>;
+}
+
 // ── Billing ──────────────────────────────────────────────────────────────────
 
 export async function getBillingStatus() {

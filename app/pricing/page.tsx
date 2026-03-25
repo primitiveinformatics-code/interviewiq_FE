@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import { getBillingStatus, createOrder, verifyPayment, redeemCoupon } from "@/lib/api";
+import { getBillingStatus, createOrder, verifyPayment, redeemCoupon, getContactInfo } from "@/lib/api";
 import { isLoggedIn } from "@/lib/auth";
+import { CONTACT } from "@/lib/contact";
 import Script from "next/script";
 
 declare global {
@@ -12,9 +13,28 @@ declare global {
 }
 
 const PACKS = [
-  { credits: 1 as const, label: "1 Interview", price: "₹700",   desc: "Perfect for one focused practice session." },
-  { credits: 5 as const, label: "5 Interviews", price: "₹2,990", desc: "Save ₹510 — great for active job searchers.", popular: true },
-  { credits: 10 as const, label: "10 Interviews", price: "₹4,990", desc: "Save ₹1,010 — best value for serious prep." },
+  {
+    credits: 1 as const,
+    label: "1 Interview",
+    originalPrice: "₹700",
+    price: "₹140",
+    desc: "Perfect for one focused practice session.",
+  },
+  {
+    credits: 5 as const,
+    label: "5 Interviews",
+    originalPrice: "₹2,990",
+    price: "₹598",
+    desc: "Save more — great for active job searchers.",
+    popular: true,
+  },
+  {
+    credits: 10 as const,
+    label: "10 Interviews",
+    originalPrice: "₹4,990",
+    price: "₹998",
+    desc: "Best value for serious prep.",
+  },
 ];
 
 export default function PricingPage() {
@@ -25,6 +45,8 @@ export default function PricingPage() {
   const [couponCode, setCouponCode] = useState("");
   const [couponLoading, setCouponLoading] = useState(false);
   const [couponMsg, setCouponMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [showCreditCheat, setShowCreditCheat] = useState(false);
+  const [contactEmail, setContactEmail] = useState(CONTACT.email);
 
   useEffect(() => {
     if (isLoggedIn()) {
@@ -33,6 +55,9 @@ export default function PricingPage() {
         setTrialUsed(s.trial_used);
       });
     }
+    getContactInfo()
+      .then((info) => setContactEmail(info.email))
+      .catch(() => {/* keep fallback */});
   }, []);
 
   async function handleRedeemCoupon() {
@@ -58,10 +83,8 @@ export default function PricingPage() {
     setLoading(c);
     setError("");
     try {
-      // Step 1: Create order on backend
       const order = await createOrder(c);
 
-      // Step 2: Open Razorpay checkout
       const rzp = new window.Razorpay({
         key:         order.key_id,
         amount:      order.amount,
@@ -78,7 +101,6 @@ export default function PricingPage() {
           razorpay_order_id: string;
           razorpay_signature: string;
         }) => {
-          // Step 3: Verify payment on backend
           try {
             const result = await verifyPayment({
               razorpay_order_id:   response.razorpay_order_id,
@@ -109,7 +131,24 @@ export default function PricingPage() {
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
 
       <div className="max-w-4xl mx-auto px-6 py-16">
-        <h1 className="text-4xl font-bold text-center mb-4">Simple, Credit-Based Pricing</h1>
+        {/* Title row with Credit Cheat button */}
+        <div className="flex items-center justify-center gap-4 mb-2 flex-wrap">
+          <h1 className="text-4xl font-bold text-center">Simple, Credit-Based Pricing</h1>
+          <button
+            onClick={() => setShowCreditCheat(true)}
+            className="flex items-center gap-1.5 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-sm font-bold px-4 py-2 rounded-full shadow-md hover:from-yellow-500 hover:to-orange-500 transition animate-pulse"
+          >
+            <span>🎁</span> Credit Cheat
+          </button>
+        </div>
+
+        {/* Launch discount badge */}
+        <div className="flex justify-center mb-3">
+          <span className="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full border border-green-300">
+            🚀 Launch Offer — 80% OFF for the first few days!
+          </span>
+        </div>
+
         <p className="text-center text-gray-500 mb-4">
           1 credit = 1 full interview (15–20 questions, up to 1 hour).
         </p>
@@ -144,7 +183,14 @@ export default function PricingPage() {
                   Most Popular
                 </span>
               )}
+              {/* 80% OFF badge */}
+              <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full self-start mb-2 font-bold">
+                80% OFF
+              </span>
               <h2 className="text-xl font-bold mb-1">{pack.label}</h2>
+              {/* Strikethrough original price */}
+              <p className="text-sm text-gray-400 line-through mb-0.5">{pack.originalPrice}</p>
+              {/* Discounted price */}
               <p className="text-3xl font-bold text-indigo-600 mb-2">{pack.price}</p>
               <p className="text-gray-500 text-sm mb-6 flex-1">{pack.desc}</p>
               <button
@@ -198,6 +244,63 @@ export default function PricingPage() {
           </div>
         </div>
       </div>
+
+      {/* ── Credit Cheat modal ──────────────────────────────────────────── */}
+      {showCreditCheat && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+          onClick={() => setShowCreditCheat(false)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-xl max-w-md w-full mx-4 p-6 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowCreditCheat(false)}
+              className="absolute top-3 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold"
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <div className="text-center mb-4">
+              <span className="text-4xl">🎁</span>
+              <h2 className="text-xl font-bold text-gray-800 mt-2">Get 2 Free Credits!</h2>
+            </div>
+            <ol className="text-sm text-gray-600 space-y-3 list-decimal list-inside">
+              <li>
+                Subscribe to our YouTube channel:{" "}
+                <a
+                  href="http://www.youtube.com/@primitive_architect"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-indigo-600 font-semibold hover:underline break-all"
+                >
+                  youtube.com/@primitive_architect
+                </a>
+              </li>
+              <li>
+                Take a screenshot of your subscription.
+              </li>
+              <li>
+                Send it to the{" "}
+                <a
+                  href={`mailto:${contactEmail}?subject=Subscribed%20and%20requesting%20credit`}
+                  className="text-indigo-600 font-semibold hover:underline"
+                >
+                  contact email ID
+                </a>{" "}
+                with subject:{" "}
+                <span className="font-mono bg-gray-100 px-1 rounded text-xs">
+                  Subscribed and requesting credit
+                </span>
+              </li>
+            </ol>
+            <p className="text-xs text-gray-400 mt-4 text-center italic">
+              You will receive 2 free interview credits after verification.
+            </p>
+          </div>
+        </div>
+      )}
     </>
   );
 }

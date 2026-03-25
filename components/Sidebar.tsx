@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { isLoggedIn, logout } from "@/lib/auth";
 import { CONTACT } from "@/lib/contact";
+import { getContactInfo, ContactInfo } from "@/lib/api";
 import { useEffect, useState } from "react";
 
 const NAV = [
@@ -57,12 +58,21 @@ export default function Sidebar() {
   const pathname = usePathname();
   const [loggedIn, setLoggedIn] = useState(false);
   const [isPracticeInterview, setIsPracticeInterview] = useState(false);
+  const [contact, setContact] = useState<Pick<ContactInfo, "email" | "phone" | "whatsapp" | "whatsapp_url">>({
+    email: CONTACT.email,
+    phone: CONTACT.phone,
+    whatsapp: CONTACT.whatsapp,
+    whatsapp_url: CONTACT.whatsappUrl,
+  });
 
   useEffect(() => {
     setLoggedIn(isLoggedIn());
     if (pathname?.startsWith("/interview/")) {
       setIsPracticeInterview(localStorage.getItem("iq_session_mode") === "practice");
     }
+    getContactInfo()
+      .then((info) => setContact({ email: info.email, phone: info.phone, whatsapp: info.whatsapp, whatsapp_url: info.whatsapp_url }))
+      .catch(() => {/* keep fallback */});
   }, [pathname]);
 
   // Hide sidebar on assessment/testing interview pages; show it in practice mode
@@ -110,25 +120,25 @@ export default function Sidebar() {
       <div className="px-4 py-4 border-t border-gray-100 space-y-2">
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Contact Us</p>
         <a
-          href={`mailto:${CONTACT.email}`}
+          href={`mailto:${contact.email}`}
           className="flex items-center gap-2 text-xs text-gray-500 hover:text-indigo-600 transition"
         >
           <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
           </svg>
-          {CONTACT.email}
+          {contact.email}
         </a>
         <a
-          href={`tel:${CONTACT.phone}`}
+          href={`tel:${contact.phone}`}
           className="flex items-center gap-2 text-xs text-gray-500 hover:text-indigo-600 transition"
         >
           <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
           </svg>
-          {CONTACT.phone}
+          {contact.phone}
         </a>
         <a
-          href={CONTACT.whatsappUrl}
+          href={contact.whatsapp_url}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-2 text-xs text-gray-500 hover:text-green-600 transition"

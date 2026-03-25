@@ -1,11 +1,12 @@
 /**
- * Contact details — edit this file to update across the entire app.
+ * Fallback contact details — used when the API is unavailable.
+ * Live values are fetched from GET /settings/contact and override these.
  */
 export const CONTACT = {
-  email:          "support@interviewiq.in",
-  phone:          "+91-98765-43210",
-  whatsapp:       "+91-98765-43210",
-  whatsappUrl:    "https://wa.me/919876543210",
-  linkedIn:       "",          // optional: LinkedIn profile URL
-  twitter:        "",          // optional: Twitter/X handle URL
+  email:          "primitiveinformatics@gmail.com",
+  phone:          "+91 7907341911",
+  whatsapp:       "+91 7907341911",
+  whatsappUrl:    "https://wa.me/917907341911",
+  linkedIn:       "",
+  twitter:        "",
 };
