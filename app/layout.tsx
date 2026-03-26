@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
-import BugBountyBanner from "@/components/BugBountyBanner";
+// Remove this line
+// import BugBountyBanner from "@/components/BugBountyBanner"; 
 
 export const metadata: Metadata = {
   title: "InterviewIQ",
@@ -15,7 +16,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="flex min-h-screen">
           <Sidebar />
           <main className="flex-1 min-w-0 flex flex-col">
-            <BugBountyBanner />
+            {/* Remove this line to hide the banner */}
+            {/* <BugBountyBanner /> */} 
             {children}
           </main>
         </div>
