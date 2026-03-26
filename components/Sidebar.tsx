@@ -71,7 +71,12 @@ export default function Sidebar() {
       setIsPracticeInterview(localStorage.getItem("iq_session_mode") === "practice");
     }
     getContactInfo()
-      .then((info) => setContact({ email: info.email, phone: info.phone, whatsapp: info.whatsapp, whatsapp_url: info.whatsapp_url }))
+      .then((info) => setContact((prev) => ({
+        email:        info.email        || prev.email,
+        phone:        info.phone        || prev.phone,
+        whatsapp:     info.whatsapp     || prev.whatsapp,
+        whatsapp_url: info.whatsapp_url || prev.whatsapp_url,
+      })))
       .catch(() => {/* keep fallback */});
   }, [pathname]);
 
