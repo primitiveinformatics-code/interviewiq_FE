@@ -78,7 +78,7 @@ export default function DashboardPage() {
     <div className="max-w-4xl mx-auto px-6 py-10">
 
       {/* ── Header ── */}
-      <div className="flex justify-between items-start mb-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-8">
         <div>
           <p className="text-sm text-gray-400 mb-0.5">Welcome back,</p>
           <h1 className="text-3xl font-bold">{getDisplayName(email)}</h1>
@@ -97,7 +97,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Start Interview CTA ── */}
-      <div className="bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-2xl p-6 mb-8 flex items-center justify-between">
+      <div className="bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <div>
           <h2 className="text-white font-bold text-lg">
             {canStart ? "Ready for your next interview?" : "No credits remaining"}
@@ -114,7 +114,7 @@ export default function DashboardPage() {
         </div>
         <a
           href={startHref}
-          className="ml-6 shrink-0 bg-white text-indigo-600 font-semibold px-6 py-3 rounded-xl hover:bg-indigo-50 transition text-sm"
+          className="w-full sm:w-auto bg-white text-indigo-600 font-semibold px-6 py-3 rounded-xl hover:bg-indigo-50 transition text-sm text-center"
         >
           {canStart ? "Start Interview →" : "Buy Credits →"}
         </a>

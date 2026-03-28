@@ -232,7 +232,7 @@ export default function StartInterviewPage() {
         {/* ── Duration ── */}
         <div className="bg-white border border-gray-200 rounded-xl p-6">
           <h2 className="font-semibold mb-3">Session Duration <span className="text-gray-400 font-normal text-sm">(optional)</span></h2>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {[
               { mins: 0,  label: "No limit" },
               { mins: 15, label: "15 min" },

@@ -235,46 +235,33 @@ export default function AccountPage() {
             </Link>
           </div>
         ) : (
-          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b">
-                <tr>
-                  <th className="px-4 py-3 text-left font-semibold text-gray-600">Date</th>
-                  <th className="px-4 py-3 text-left font-semibold text-gray-600">Mode</th>
-                  <th className="px-4 py-3 text-center font-semibold text-gray-600">Type</th>
-                  <th className="px-4 py-3 text-center font-semibold text-gray-600">Status</th>
-                  <th className="px-4 py-3 text-center font-semibold text-gray-600">Questions</th>
-                  <th className="px-4 py-3 text-center font-semibold text-gray-600">Report</th>
-                </tr>
-              </thead>
-              <tbody>
-                {account.recent_sessions.map((s) => (
-                  <tr key={s.session_id} className="border-b last:border-0 hover:bg-gray-50">
-                    <td className="px-4 py-3 text-gray-600">
-                      {new Date(s.started_at).toLocaleDateString("en-IN", {
-                        day: "numeric", month: "short", year: "numeric",
-                      })}
-                    </td>
-                    <td className="px-4 py-3 capitalize text-gray-700">{s.mode}</td>
-                    <td className="px-4 py-3 text-center">{sessionTypeBadge(s.session_type)}</td>
-                    <td className="px-4 py-3 text-center">{sessionStatusBadge(s.status)}</td>
-                    <td className="px-4 py-3 text-center font-semibold">{s.questions_answered}</td>
-                    <td className="px-4 py-3 text-center">
-                      {s.status === "completed" ? (
-                        <Link
-                          href={`/reports/${s.session_id}`}
-                          className="text-indigo-600 hover:underline text-xs font-medium"
-                        >
-                          View →
-                        </Link>
-                      ) : (
-                        <span className="text-gray-300 text-xs">—</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm divide-y divide-gray-100">
+            {account.recent_sessions.map((s) => (
+              <div key={s.session_id} className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 gap-3">
+                <div className="min-w-0">
+                  <p className="text-sm font-medium capitalize text-gray-800 truncate">
+                    {s.mode} interview
+                    <span className="ml-2 text-xs text-gray-400 font-normal">
+                      {new Date(s.started_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                    </span>
+                  </p>
+                  <div className="flex flex-wrap items-center gap-1.5 mt-1">
+                    {sessionTypeBadge(s.session_type)}
+                    {sessionStatusBadge(s.status)}
+                    <span className="text-xs text-gray-400">{s.questions_answered} Qs</span>
+                  </div>
+                </div>
+                <div className="shrink-0">
+                  {s.status === "completed" ? (
+                    <Link href={`/reports/${s.session_id}`} className="text-indigo-600 hover:underline text-xs font-medium">
+                      View →
+                    </Link>
+                  ) : (
+                    <span className="text-gray-300 text-xs">—</span>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

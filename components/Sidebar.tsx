@@ -58,6 +58,7 @@ export default function Sidebar() {
   const pathname = usePathname();
   const [loggedIn, setLoggedIn] = useState(false);
   const [isPracticeInterview, setIsPracticeInterview] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [contact, setContact] = useState<Pick<ContactInfo, "email" | "phone" | "whatsapp" | "whatsapp_url">>({
     email: CONTACT.email,
     phone: CONTACT.phone,
@@ -85,12 +86,41 @@ export default function Sidebar() {
 
   return (
     <>
-    {/* Invisible flex spacer — keeps <main> offset right without ml-60 on the layout */}
-    <div className="w-60 shrink-0" />
-    <aside className="fixed left-0 top-0 h-screen w-60 bg-white border-r border-gray-100 flex flex-col z-30 shadow-sm">
+    {/* Mobile top bar */}
+    <div className="flex md:hidden items-center justify-between px-4 py-3 bg-white border-b border-gray-100 fixed top-0 left-0 right-0 z-40">
+      <Link href="/" className="text-lg font-bold text-indigo-600 tracking-tight">InterviewIQ</Link>
+      <button
+        onClick={() => setMobileOpen((o) => !o)}
+        className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition"
+        aria-label="Toggle menu"
+      >
+        {mobileOpen ? (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        ) : (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        )}
+      </button>
+    </div>
+
+    {/* Mobile backdrop */}
+    {mobileOpen && (
+      <div
+        className="fixed inset-0 bg-black/40 z-30 md:hidden"
+        onClick={() => setMobileOpen(false)}
+      />
+    )}
+
+    {/* Invisible flex spacer — keeps <main> offset right on desktop */}
+    <div className="hidden md:block w-60 shrink-0" />
+    <aside className={`fixed left-0 top-0 h-screen w-60 bg-white border-r border-gray-100 flex flex-col z-40 shadow-sm transition-transform duration-200
+      ${mobileOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}>
       {/* Logo */}
       <div className="px-5 py-5 border-b border-gray-100">
-        <Link href="/" className="text-xl font-bold text-indigo-600 tracking-tight">
+        <Link href="/" className="text-xl font-bold text-indigo-600 tracking-tight" onClick={() => setMobileOpen(false)}>
           InterviewIQ
         </Link>
         <p className="text-xs text-gray-400 mt-0.5">AI Interview Coach</p>
@@ -106,6 +136,7 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={() => setMobileOpen(false)}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive
                   ? "bg-indigo-50 text-indigo-700"

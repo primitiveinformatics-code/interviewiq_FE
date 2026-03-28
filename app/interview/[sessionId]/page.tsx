@@ -326,13 +326,13 @@ export default function InterviewPage({ params }: { params: Promise<{ sessionId:
 
   // ── Render ────────────────────────────────────────────────────────────────────
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-[calc(100vh-3.5rem)] md:h-screen bg-gray-50 overflow-hidden">
 
       {/* ── Main interview area ── */}
       <div className="flex flex-col flex-1 min-w-0 px-4 py-6">
 
         {/* Header */}
-        <div className="flex justify-between items-center mb-3">
+        <div className="flex flex-wrap justify-between items-center gap-2 mb-3">
           <div>
             <h1 className="text-xl font-bold">Interview Session</h1>
             {phase === "active" && (
@@ -355,7 +355,7 @@ export default function InterviewPage({ params }: { params: Promise<{ sessionId:
               </div>
             )}
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             {isPractice && (
               <span className="bg-green-100 text-green-700 text-xs font-semibold px-2.5 py-1 rounded-full">
                 Practice
