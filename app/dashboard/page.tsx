@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { apiFetch } from "@/lib/api";
-import { isLoggedIn, getCurrentUserId, getUserEmail } from "@/lib/auth";
+import { isLoggedIn, getCurrentUserId, getUserEmail, redirectToLogin } from "@/lib/auth";
 
 interface SessionRow {
   session_id: string;
@@ -49,7 +50,7 @@ export default function DashboardPage() {
   const [historyOpen, setHistoryOpen] = useState(false);
 
   useEffect(() => {
-    if (!isLoggedIn()) { window.location.href = "/login"; return; }
+    if (!isLoggedIn()) { redirectToLogin(); return; }
     setEmail(getUserEmail());
     const uid = getCurrentUserId();
     Promise.all([
@@ -90,9 +91,9 @@ export default function DashboardPage() {
               {credits} credit{credits !== 1 ? "s" : ""} remaining
             </span>
           )}
-          <a href="/pricing" className="border border-indigo-200 text-indigo-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-50 transition">
+          <Link href="/pricing" className="border border-indigo-200 text-indigo-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-50 transition">
             Buy Credits
-          </a>
+          </Link>
         </div>
       </div>
 
@@ -112,12 +113,12 @@ export default function DashboardPage() {
               : "Purchase credits to continue practising."}
           </p>
         </div>
-        <a
+        <Link
           href={startHref}
           className="w-full sm:w-auto bg-white text-indigo-600 font-semibold px-6 py-3 rounded-xl hover:bg-indigo-50 transition text-sm text-center"
         >
           {canStart ? "Start Interview →" : "Buy Credits →"}
-        </a>
+        </Link>
       </div>
 
       {/* ── Analytics ── */}

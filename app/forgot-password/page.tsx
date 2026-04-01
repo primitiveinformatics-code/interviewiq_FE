@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 import { forgotPassword } from "@/lib/api";
 
 export default function ForgotPasswordPage() {
@@ -60,7 +61,7 @@ export default function ForgotPasswordPage() {
               {loading ? "Sending…" : "Send Reset Link"}
             </button>
             <p className="text-center text-xs text-gray-400">
-              <a href="/login" className="text-indigo-500 hover:underline">Back to Sign In</a>
+              <Link href="/login" className="text-indigo-500 hover:underline">Back to Sign In</Link>
             </p>
           </form>
         ) : (
@@ -82,9 +83,9 @@ export default function ForgotPasswordPage() {
               </div>
             )}
 
-            <a href="/login" className="inline-block text-sm text-indigo-600 hover:underline">
+            <Link href="/login" className="inline-block text-sm text-indigo-600 hover:underline">
               Back to Sign In
-            </a>
+            </Link>
           </div>
         )}
       </div>

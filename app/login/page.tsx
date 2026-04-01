@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 import { redirectToOAuth } from "@/lib/auth";
 import { registerWithPassword, loginWithPassword, setToken } from "@/lib/api";
 import { useRouter } from "next/navigation";
@@ -167,7 +168,7 @@ export default function LoginPage() {
             </p>
             {mode === "login" && (
               <p className="text-center text-xs text-gray-400">
-                <a href="/forgot-password" className="text-indigo-500 hover:underline">Forgot password?</a>
+                <Link href="/forgot-password" className="text-indigo-500 hover:underline">Forgot password?</Link>
               </p>
             )}
           </form>

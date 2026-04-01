@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { getMyAccount, getLlmSettings, saveLlmSettings, AccountInfo } from "@/lib/api";
-import { isLoggedIn } from "@/lib/auth";
+import { isLoggedIn, redirectToLogin } from "@/lib/auth";
 import Link from "next/link";
 
 function StatCard({ label, value, sub }: { label: string; value: string | number; sub?: string }) {
@@ -55,7 +55,7 @@ export default function AccountPage() {
   const [llmMsg, setLlmMsg]     = useState("");
 
   useEffect(() => {
-    if (!isLoggedIn()) { window.location.href = "/login"; return; }
+    if (!isLoggedIn()) { redirectToLogin(); return; }
     getMyAccount()
       .then((a) => {
         setAccount(a);

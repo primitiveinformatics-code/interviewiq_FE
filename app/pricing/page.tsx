@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { getBillingStatus, createOrder, verifyPayment, redeemCoupon, getContactInfo } from "@/lib/api";
-import { isLoggedIn } from "@/lib/auth";
+import { isLoggedIn, redirectToLogin } from "@/lib/auth";
 import { CONTACT } from "@/lib/contact";
 import Script from "next/script";
 
@@ -61,7 +61,7 @@ export default function PricingPage() {
   }, []);
 
   async function handleRedeemCoupon() {
-    if (!isLoggedIn()) { window.location.href = "/login"; return; }
+    if (!isLoggedIn()) { redirectToLogin(); return; }
     const code = couponCode.trim();
     if (!code) return;
     setCouponLoading(true);
@@ -79,7 +79,7 @@ export default function PricingPage() {
   }
 
   async function handleBuy(c: 1 | 5 | 10) {
-    if (!isLoggedIn()) { window.location.href = "/login"; return; }
+    if (!isLoggedIn()) { redirectToLogin(); return; }
     setLoading(c);
     setError("");
     try {

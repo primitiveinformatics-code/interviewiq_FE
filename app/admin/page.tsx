@@ -5,7 +5,7 @@ import {
   listCoupons, generateCoupon, deactivateCoupon, reactivateCoupon,
   CouponRow,
 } from "@/lib/api";
-import { isLoggedIn } from "@/lib/auth";
+import { isLoggedIn, redirectToLogin } from "@/lib/auth";
 
 interface UserRow {
   user_id: string;
@@ -58,7 +58,7 @@ export default function AdminPage() {
   const [generating, setGenerating] = useState(false);
 
   useEffect(() => {
-    if (!isLoggedIn()) { window.location.href = "/login"; return; }
+    if (!isLoggedIn()) { redirectToLogin(); return; }
     loadUsers();
     loadCoupons();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps

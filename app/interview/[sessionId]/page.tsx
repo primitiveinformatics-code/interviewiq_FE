@@ -1,5 +1,6 @@
 "use client";
 import { use, useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { WS_URL } from "@/lib/api";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -444,9 +445,9 @@ export default function InterviewPage({ params }: { params: Promise<{ sessionId:
         {phase === "trial_limit" && (
           <div className="bg-amber-50 border border-amber-300 rounded-xl p-4 text-center mb-3">
             <p className="font-semibold text-amber-800 mb-2">Free trial complete!</p>
-            <a href="/pricing" className="bg-indigo-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700">
+            <Link href="/pricing" className="bg-indigo-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700">
               Buy Credits to Continue
-            </a>
+            </Link>
           </div>
         )}
         {phase === "complete" && (

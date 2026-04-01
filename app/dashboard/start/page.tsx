@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { isLoggedIn, getCurrentUserId } from "@/lib/auth";
 import { apiFetch, startSession, getBillingStatus } from "@/lib/api";
@@ -102,9 +103,9 @@ export default function StartInterviewPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-12">
-      <a href="/dashboard" className="text-sm text-gray-400 hover:text-gray-600 mb-6 inline-block">
+      <Link href="/dashboard" className="text-sm text-gray-400 hover:text-gray-600 mb-6 inline-block">
         ← Back to dashboard
-      </a>
+      </Link>
       <h1 className="text-3xl font-bold mb-2">Start an Interview</h1>
       <p className="text-gray-500 text-sm mb-6">
         Upload your job description and resume, choose a mode, and begin.
@@ -118,7 +119,7 @@ export default function StartInterviewPage() {
       {billing && billing.trial_used && billing.interview_credits === 0 && (
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6 text-amber-700 text-sm">
           You have no credits remaining.{" "}
-          <a href="/pricing" className="font-semibold underline">Buy credits →</a>
+          <Link href="/pricing" className="font-semibold underline">Buy credits →</Link>
         </div>
       )}
       {billing && billing.interview_credits > 0 && (

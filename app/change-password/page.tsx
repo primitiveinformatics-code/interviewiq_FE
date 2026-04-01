@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { changePassword } from "@/lib/api";
-import { isLoggedIn } from "@/lib/auth";
+import { isLoggedIn, redirectToLogin } from "@/lib/auth";
 
 export default function ChangePasswordPage() {
   const router = useRouter();
@@ -15,7 +15,7 @@ export default function ChangePasswordPage() {
   const [success, setSuccess]   = useState(false);
 
   if (!isLoggedIn()) {
-    if (typeof window !== "undefined") window.location.href = "/login";
+    redirectToLogin();
     return null;
   }
 

@@ -1,7 +1,8 @@
 "use client";
 import { use, useEffect, useState } from "react";
+import Link from "next/link";
 import { getReport } from "@/lib/api";
-import { isLoggedIn } from "@/lib/auth";
+import { isLoggedIn, redirectToLogin } from "@/lib/auth";
 
 interface QABreakdown {
   question: string;
@@ -135,7 +136,7 @@ export default function ReportPage({ params }: { params: Promise<{ sessionId: st
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!isLoggedIn()) { window.location.href = "/login"; return; }
+    if (!isLoggedIn()) { redirectToLogin(); return; }
     getReport(sid)
       .then(setReport)
       .catch((e) => setError(e.message));
@@ -143,7 +144,7 @@ export default function ReportPage({ params }: { params: Promise<{ sessionId: st
 
   if (error) return (
     <div className="max-w-3xl mx-auto px-6 py-12">
-      <a href="/reports" className="text-sm text-gray-400 hover:text-gray-600 mb-6 inline-block">← All Reports</a>
+      <Link href="/reports" className="text-sm text-gray-400 hover:text-gray-600 mb-6 inline-block">← All Reports</Link>
       <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-red-700">{error}</div>
     </div>
   );
@@ -186,9 +187,9 @@ export default function ReportPage({ params }: { params: Promise<{ sessionId: st
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-10">
-      <a href="/reports" className="text-sm text-gray-400 hover:text-gray-600 mb-6 inline-block">
+      <Link href="/reports" className="text-sm text-gray-400 hover:text-gray-600 mb-6 inline-block">
         ← All Reports
-      </a>
+      </Link>
 
       {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-8">
@@ -224,12 +225,12 @@ export default function ReportPage({ params }: { params: Promise<{ sessionId: st
           </svg>
           Download PDF
         </a>
-        <a
+        <Link
           href="/dashboard/start"
           className="flex items-center gap-2 border border-indigo-200 text-indigo-600 px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-indigo-50 transition"
         >
           Try Again →
-        </a>
+        </Link>
       </div>
 
       {/* ── Dimension averages ── */}

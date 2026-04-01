@@ -1,5 +1,6 @@
 "use client";
 import { Suspense, useState, useEffect } from "react";
+import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { resetPassword } from "@/lib/api";
 
@@ -86,7 +87,7 @@ function ResetPasswordForm() {
               {loading ? "Saving…" : "Set New Password"}
             </button>
             <p className="text-center text-xs text-gray-400">
-              <a href="/login" className="text-indigo-500 hover:underline">Back to Sign In</a>
+              <Link href="/login" className="text-indigo-500 hover:underline">Back to Sign In</Link>
             </p>
           </form>
         )}

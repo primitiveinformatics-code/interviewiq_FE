@@ -1,4 +1,5 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 function getToken(): string | null {
   if (typeof window === "undefined") return null;
@@ -29,7 +30,7 @@ export async function apiFetch<T = unknown>(
 
   if (res.status === 401) {
     clearToken();
-    window.location.href = "/login";
+    if (typeof window !== "undefined") window.location.href = BASE + "/login";
     throw new Error("Unauthorized");
   }
 

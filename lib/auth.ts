@@ -1,6 +1,11 @@
 import { setToken, clearToken } from "./api";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
+export function redirectToLogin() {
+  if (typeof window !== "undefined") window.location.href = BASE + "/login";
+}
 
 export function getCurrentUserId(): string | null {
   if (typeof window === "undefined") return null;
@@ -25,7 +30,7 @@ export function isLoggedIn(): boolean {
 
 export function logout() {
   clearToken();
-  window.location.href = "/login";
+  redirectToLogin();
 }
 
 /** Called after Keycloak OAuth callback — exchanges email for JWT */

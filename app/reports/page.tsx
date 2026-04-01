@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { apiFetch } from "@/lib/api";
-import { isLoggedIn, getCurrentUserId } from "@/lib/auth";
+import { isLoggedIn, getCurrentUserId, redirectToLogin } from "@/lib/auth";
 
 interface SessionRow {
   session_id: string;
@@ -33,7 +34,7 @@ export default function ReportsPage() {
   const [filter, setFilter] = useState<"all" | "completed" | "in_progress">("all");
 
   useEffect(() => {
-    if (!isLoggedIn()) { window.location.href = "/login"; return; }
+    if (!isLoggedIn()) { redirectToLogin(); return; }
     const uid = getCurrentUserId();
     apiFetch<SessionRow[]>(`/reports/history/${uid}`)
       .then((s) => setSessions(s as SessionRow[]))
@@ -58,12 +59,12 @@ export default function ReportsPage() {
           <h1 className="text-3xl font-bold mb-1">Reports</h1>
           <p className="text-gray-400 text-sm">All your interview sessions and performance reports.</p>
         </div>
-        <a
+        <Link
           href="/dashboard/start"
           className="bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition"
         >
           + New Interview
-        </a>
+        </Link>
       </div>
 
       {/* ── Summary strip ── */}
@@ -113,9 +114,9 @@ export default function ReportsPage() {
               : "No sessions match this filter."}
           </p>
           {sessions.length === 0 && (
-            <a href="/dashboard/start" className="inline-block mt-3 text-indigo-600 text-sm font-medium hover:underline">
+            <Link href="/dashboard/start" className="inline-block mt-3 text-indigo-600 text-sm font-medium hover:underline">
               Start your first interview →
-            </a>
+            </Link>
           )}
         </div>
       ) : (
