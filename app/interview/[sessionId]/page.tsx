@@ -192,20 +192,29 @@ export default function InterviewPage({ params }: { params: Promise<{ sessionId:
 
   // ── Connect function ──────────────────────────────────────────────────────────
   function connect(payload?: Record<string, string>) {
-    if (wsRef.current) { wsRef.current.onerror = null; wsRef.current.onmessage = null; wsRef.current.close(); }
+    if (wsRef.current) { wsRef.current.onerror = null; wsRef.current.onmessage = null; wsRef.current.onclose = null; wsRef.current.close(); }
     const ws = new WebSocket(`${WS_URL}/interview/${sid}?token=${token}`);
     wsRef.current = ws;
+    let messageReceived = false;
     ws.onopen = () => {
       if (payload) ws.send(JSON.stringify(payload));
     };
     ws.onmessage = (e) => {
+      messageReceived = true;
       const msg = JSON.parse(e.data);
       handleMessage(msg);
       if (msg.type !== "report") ws.close();
     };
-    // Only surface the error if this socket is still the active one (guards against
-    // stale sockets from React StrictMode double-invoke or rapid re-connects).
+    // Only surface errors/unexpected closes if this socket is still the active one.
     ws.onerror = () => { if (wsRef.current === ws) setConnError("Could not reach the server. Check your connection and try again."); };
+    ws.onclose = (e) => {
+      if (wsRef.current !== ws) return; // stale socket — ignore
+      if (messageReceived) return;      // normal close after message exchange
+      // Connection closed before any message — surface a useful error
+      const reason = e.reason || "Connection closed by server. Please try again.";
+      setConnError(reason);
+      if (phaseRef.current === "connecting") setPhase("active");
+    };
   }
 
   function sendAnswer() {
@@ -453,9 +462,9 @@ export default function InterviewPage({ params }: { params: Promise<{ sessionId:
         {phase === "complete" && (
           <div className="bg-green-50 border border-green-300 rounded-xl p-4 text-center mb-3">
             <p className="font-semibold text-green-800 mb-2">Interview complete!</p>
-            <a href={`/reports/${sid}`} className="bg-indigo-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700">
+            <Link href={`/reports/${sid}`} className="bg-indigo-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700">
               View Full Report →
-            </a>
+            </Link>
           </div>
         )}
 
