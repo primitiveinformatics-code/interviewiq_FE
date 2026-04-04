@@ -282,8 +282,11 @@ export default function InterviewPage({ params }: { params: Promise<{ sessionId:
       }
     } catch { /* corrupt storage — ignore */ }
 
-    // Fresh start
-    connect();
+    // Fresh start — send "resume" so the BE re-sends the current question if Redis
+    // state already exists (e.g. user opened in a new browser with no localStorage).
+    // For truly new sessions (no Redis state) the BE ignores this payload and runs
+    // the normal pipeline.
+    connect({ action: "resume" });
 
     return () => {
       // Silence any in-flight callbacks when the component unmounts (or StrictMode

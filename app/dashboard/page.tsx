@@ -178,9 +178,9 @@ export default function DashboardPage() {
                         {s.status}
                       </span>
                       {s.status === "completed" && (
-                        <a href={`/reports/${s.session_id}`} className="text-indigo-600 text-xs font-medium hover:underline">
+                        <Link href={`/reports/${s.session_id}`} className="text-indigo-600 text-xs font-medium hover:underline">
                           Report →
-                        </a>
+                        </Link>
                       )}
                     </div>
                   </div>
