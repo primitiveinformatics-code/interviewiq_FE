@@ -1,10 +1,22 @@
 "use client";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { isLoggedIn, logout } from "@/lib/auth";
 import { CONTACT } from "@/lib/contact";
 import { getContactInfo, ContactInfo } from "@/lib/api";
 import { useEffect, useState } from "react";
+
+// Detect basePath dynamically from the current URL so hard-nav links work
+// in both dev (no basePath) and prod (/interviewbot).
+const KNOWN_FIRST_SEGMENTS = new Set(["dashboard","reports","pricing","account","login","interview","admin","auth","forgot-password","reset-password","change-password"]);
+function getBasePath(): string {
+  if (typeof window === "undefined") return "";
+  const first = window.location.pathname.split("/").filter(Boolean)[0] ?? "";
+  return KNOWN_FIRST_SEGMENTS.has(first) ? "" : "/" + first;
+}
+
+function hardNav(path: string) {
+  window.location.href = getBasePath() + path;
+}
 
 const NAV = [
   {
@@ -88,7 +100,7 @@ export default function Sidebar() {
     <>
     {/* Mobile top bar */}
     <div className="flex md:hidden items-center justify-between px-4 py-3 bg-white border-b border-gray-100 fixed top-0 left-0 right-0 z-40">
-      <Link href="/" className="text-lg font-bold text-indigo-600 tracking-tight">InterviewIQ</Link>
+      <a href={getBasePath() + "/"} onClick={(e) => { e.preventDefault(); hardNav("/"); }} className="text-lg font-bold text-indigo-600 tracking-tight">InterviewIQ</a>
       <button
         onClick={() => setMobileOpen((o) => !o)}
         className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition"
@@ -120,9 +132,9 @@ export default function Sidebar() {
       ${mobileOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}>
       {/* Logo */}
       <div className="px-5 py-5 border-b border-gray-100">
-        <Link href="/" className="text-xl font-bold text-indigo-600 tracking-tight" onClick={() => setMobileOpen(false)}>
+        <a href={getBasePath() + "/"} onClick={(e) => { e.preventDefault(); setMobileOpen(false); hardNav("/"); }} className="text-xl font-bold text-indigo-600 tracking-tight">
           InterviewIQ
-        </Link>
+        </a>
         <p className="text-xs text-gray-400 mt-0.5">AI Interview Coach</p>
       </div>
 
@@ -133,10 +145,10 @@ export default function Sidebar() {
           const dashActive = item.href === "/dashboard" && (pathname === "/dashboard");
           const isActive = item.href === "/dashboard" ? dashActive : active;
           return (
-            <Link
+            <a
               key={item.href}
-              href={item.href}
-              onClick={() => setMobileOpen(false)}
+              href={getBasePath() + item.href}
+              onClick={(e) => { e.preventDefault(); setMobileOpen(false); hardNav(item.href); }}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive
                   ? "bg-indigo-50 text-indigo-700"
@@ -147,7 +159,7 @@ export default function Sidebar() {
                 {item.icon}
               </span>
               {item.label}
-            </Link>
+            </a>
           );
         })}
       </nav>
@@ -201,12 +213,13 @@ export default function Sidebar() {
         </div>
       ) : (
         <div className="px-4 pb-4">
-          <Link
-            href="/login"
+          <a
+            href={getBasePath() + "/login"}
+            onClick={(e) => { e.preventDefault(); hardNav("/login"); }}
             className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-700 transition"
           >
             Sign In →
-          </Link>
+          </a>
         </div>
       )}
     </aside>
