@@ -28,6 +28,8 @@ export default function InterviewPage({ params }: { params: Promise<{ sessionId:
   const [input, setInput]       = useState("");
   const [phase, setPhase]       = useState<"connecting" | "active" | "ending" | "trial_limit" | "complete">("connecting");
   const [connError, setConnError] = useState<string | null>(null);
+  const [slowConn, setSlowConn]   = useState(false);
+  const slowTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Practice mode
   const [isPractice,  setIsPractice]  = useState(false);
@@ -164,7 +166,7 @@ export default function InterviewPage({ params }: { params: Promise<{ sessionId:
     setConnError(null);
     if (msg.error) {
       setConnError(String(msg.error));
-      if (phaseRef.current === "connecting") setPhase("active");
+      // Stay in "connecting" so the retry button is visible
       return;
     }
     if (msg.type === "greeting") {
@@ -213,7 +215,8 @@ export default function InterviewPage({ params }: { params: Promise<{ sessionId:
       // Connection closed before any message — surface a useful error
       const reason = e.reason || "Connection closed by server. Please try again.";
       setConnError(reason);
-      if (phaseRef.current === "connecting") setPhase("active");
+      // Stay in "connecting" so the retry button is visible; only advance if already active
+      if (phaseRef.current !== "connecting") return;
     };
   }
 
@@ -247,14 +250,19 @@ export default function InterviewPage({ params }: { params: Promise<{ sessionId:
     setPhase("ending");
     const ws = new WebSocket(`${WS_URL}/interview/${sid}?token=${token}`);
     wsRef.current = ws;
+    let completed = false;
     ws.onopen    = () => ws.send(JSON.stringify({ action: "end" }));
     ws.onmessage = (e) => {
       const msg = JSON.parse(e.data);
-      if (msg.type === "complete") { setPhase("complete"); ws.close(); }
-      else if (msg.error) { setConnError(String(msg.error)); setPhase("active"); ws.close(); }
+      if (msg.type === "complete") { completed = true; setPhase("complete"); ws.close(); }
+      else if (msg.error) { completed = true; setConnError(String(msg.error)); setPhase("active"); ws.close(); }
       // "report" follows before "complete" — keep open
     };
     ws.onerror = () => { if (wsRef.current === ws) { setConnError("Failed to end interview. Please try again."); setPhase("active"); } };
+    ws.onclose = () => {
+      // If WS closed without "complete", the report timed out — let user retry
+      if (!completed && wsRef.current === ws) { setConnError("Report generation timed out. Please try again."); setPhase("active"); }
+    };
   }
 
   // ── Init on mount ─────────────────────────────────────────────────────────────
@@ -275,8 +283,8 @@ export default function InterviewPage({ params }: { params: Promise<{ sessionId:
         if (msgs.length > 0) {
           setMessages(msgs);
           setPhase("active");
-          // Send resume action to get back the current question
-          connect({ action: "resume" });
+          // Don't call connect() here — the question is already visible in restored
+          // chat and the user can answer directly (Redis state exists on the backend).
           return;
         }
       }
@@ -288,6 +296,11 @@ export default function InterviewPage({ params }: { params: Promise<{ sessionId:
     // the normal pipeline.
     connect({ action: "resume" });
 
+    // Show "taking longer than usual" hint after 20 s in connecting phase
+    slowTimerRef.current = setTimeout(() => {
+      if (phaseRef.current === "connecting") setSlowConn(true);
+    }, 20000);
+
     return () => {
       // Silence any in-flight callbacks when the component unmounts (or StrictMode
       // re-mounts). The stale-check in onerror also guards this, but nullifying
@@ -297,9 +310,18 @@ export default function InterviewPage({ params }: { params: Promise<{ sessionId:
         wsRef.current.onmessage = null;
         wsRef.current.close();
       }
+      if (slowTimerRef.current) clearTimeout(slowTimerRef.current);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Clear slow-conn banner once we leave the connecting phase
+  useEffect(() => {
+    if (phase !== "connecting") {
+      setSlowConn(false);
+      if (slowTimerRef.current) { clearTimeout(slowTimerRef.current); slowTimerRef.current = null; }
+    }
+  }, [phase]);
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
@@ -409,7 +431,22 @@ export default function InterviewPage({ params }: { params: Promise<{ sessionId:
         {/* Chat */}
         <div className="flex-1 overflow-y-auto space-y-4 mb-3 bg-white border rounded-xl p-4">
           {messages.length === 0 && phase === "connecting" && (
-            <p className="text-center text-gray-400 text-sm py-8 animate-pulse">Connecting…</p>
+            <div className="py-8 text-center space-y-2">
+              <p className="text-gray-400 text-sm animate-pulse">Connecting…</p>
+              {slowConn && (
+                <p className="text-amber-500 text-xs animate-pulse">
+                  ⏳ Taking longer than usual — the AI is warming up…
+                </p>
+              )}
+              {connError && (
+                <button
+                  onClick={() => { setConnError(null); setSlowConn(false); connect({ action: "resume" }); }}
+                  className="mt-2 bg-indigo-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700"
+                >
+                  Retry Connection
+                </button>
+              )}
+            </div>
           )}
           {messages.map((m, i) => (
             <div key={i} className={`flex ${m.role === "candidate" ? "justify-end" : "justify-start"}`}>
