@@ -83,9 +83,9 @@ export default function ForgotPasswordPage() {
               </div>
             )}
 
-            <Link href="/login" className="inline-block text-sm text-indigo-600 hover:underline">
+            <a href={getBasePath() + "/login"} onClick={(e) => { e.preventDefault(); hardNav("/login"); }} className="inline-block text-sm text-indigo-600 hover:underline">
               Back to Sign In
-            </Link>
+            </a>
           </div>
         )}
       </div>
