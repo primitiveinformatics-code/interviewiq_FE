@@ -187,9 +187,9 @@ export default function ReportPage({ params }: { params: Promise<{ sessionId: st
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-10">
-      <Link href="/reports" className="text-sm text-gray-400 hover:text-gray-600 mb-6 inline-block">
+      <a href={getBasePath() + "/reports"} onClick={(e) => { e.preventDefault(); hardNav("/reports"); }} className="text-sm text-gray-400 hover:text-gray-600 mb-6 inline-block">
         ← All Reports
-      </Link>
+      </a>
 
       {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-8">
