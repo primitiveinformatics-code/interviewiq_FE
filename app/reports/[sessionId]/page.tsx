@@ -1,7 +1,7 @@
 "use client";
 import { use, useEffect, useState } from "react";
-import Link from "next/link";
 import { getReport } from "@/lib/api";
+import { getBasePath, hardNav } from "@/lib/nav";
 import { isLoggedIn, redirectToLogin } from "@/lib/auth";
 
 interface QABreakdown {
@@ -144,7 +144,7 @@ export default function ReportPage({ params }: { params: Promise<{ sessionId: st
 
   if (error) return (
     <div className="max-w-3xl mx-auto px-6 py-12">
-      <Link href="/reports" className="text-sm text-gray-400 hover:text-gray-600 mb-6 inline-block">← All Reports</Link>
+      <a href={getBasePath() + "/reports"} onClick={(e) => { e.preventDefault(); hardNav("/reports"); }} className="text-sm text-gray-400 hover:text-gray-600 mb-6 inline-block">← All Reports</a>
       <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-red-700">{error}</div>
     </div>
   );
@@ -225,12 +225,13 @@ export default function ReportPage({ params }: { params: Promise<{ sessionId: st
           </svg>
           Download PDF
         </a>
-        <Link
-          href="/dashboard/start"
+        <a
+          href={getBasePath() + "/dashboard/start"}
+          onClick={(e) => { e.preventDefault(); hardNav("/dashboard/start"); }}
           className="flex items-center gap-2 border border-indigo-200 text-indigo-600 px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-indigo-50 transition"
         >
           Try Again →
-        </Link>
+        </a>
       </div>
 
       {/* ── Dimension averages ── */}

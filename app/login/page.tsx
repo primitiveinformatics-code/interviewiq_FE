@@ -1,14 +1,12 @@
 "use client";
 import { useState } from "react";
-import Link from "next/link";
 import { redirectToOAuth } from "@/lib/auth";
 import { registerWithPassword, loginWithPassword, setToken } from "@/lib/api";
-import { useRouter } from "next/navigation";
+import { getBasePath, hardNav } from "@/lib/nav";
 
 type Mode = "social" | "login" | "register";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [mode, setMode] = useState<Mode>("social");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,9 +32,9 @@ export default function LoginPage() {
       localStorage.setItem("user_email", email);
       if (data.refresh_token) localStorage.setItem("refresh_token", data.refresh_token);
       if (data.must_change_password) {
-        router.push("/change-password");
+        hardNav("/change-password");
       } else {
-        router.push("/dashboard");
+        hardNav("/dashboard");
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Something went wrong");
@@ -168,7 +166,7 @@ export default function LoginPage() {
             </p>
             {mode === "login" && (
               <p className="text-center text-xs text-gray-400">
-                <Link href="/forgot-password" className="text-indigo-500 hover:underline">Forgot password?</Link>
+                <a href={getBasePath() + "/forgot-password"} onClick={(e) => { e.preventDefault(); hardNav("/forgot-password"); }} className="text-indigo-500 hover:underline">Forgot password?</a>
               </p>
             )}
           </form>

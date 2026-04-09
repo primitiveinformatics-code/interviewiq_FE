@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { getMyAccount, getLlmSettings, saveLlmSettings, AccountInfo } from "@/lib/api";
 import { isLoggedIn, redirectToLogin } from "@/lib/auth";
-import Link from "next/link";
+import { getBasePath, hardNav } from "@/lib/nav";
 
 function StatCard({ label, value, sub }: { label: string; value: string | number; sub?: string }) {
   return (
@@ -141,24 +141,15 @@ export default function AccountPage() {
 
       {/* ── Credit actions ────────────────────────────────────────────────── */}
       <div className="flex flex-wrap gap-3 mb-10">
-        <Link
-          href="/pricing"
-          className="bg-indigo-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition"
-        >
+        <a href={getBasePath() + "/pricing"} onClick={(e) => { e.preventDefault(); hardNav("/pricing"); }} className="bg-indigo-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition">
           Buy Credits
-        </Link>
-        <Link
-          href="/pricing#coupon"
-          className="border border-indigo-300 text-indigo-600 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-indigo-50 transition"
-        >
+        </a>
+        <a href={getBasePath() + "/pricing#coupon"} onClick={(e) => { e.preventDefault(); hardNav("/pricing#coupon"); }} className="border border-indigo-300 text-indigo-600 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-indigo-50 transition">
           Redeem Coupon
-        </Link>
-        <Link
-          href="/dashboard"
-          className="border border-gray-200 text-gray-600 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-50 transition"
-        >
+        </a>
+        <a href={getBasePath() + "/dashboard"} onClick={(e) => { e.preventDefault(); hardNav("/dashboard"); }} className="border border-gray-200 text-gray-600 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-50 transition">
           Start Interview
-        </Link>
+        </a>
       </div>
 
       {/* ── Redeemed coupons ──────────────────────────────────────────────── */}
@@ -230,9 +221,9 @@ export default function AccountPage() {
             <p className="text-4xl mb-3">🎙️</p>
             <p className="font-medium">No sessions yet</p>
             <p className="text-sm mt-1">Start your first interview from the Dashboard.</p>
-            <Link href="/dashboard" className="mt-4 inline-block bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition">
+            <a href={getBasePath() + "/dashboard"} onClick={(e) => { e.preventDefault(); hardNav("/dashboard"); }} className="mt-4 inline-block bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition">
               Go to Dashboard
-            </Link>
+            </a>
           </div>
         ) : (
           <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm divide-y divide-gray-100">
@@ -253,9 +244,9 @@ export default function AccountPage() {
                 </div>
                 <div className="shrink-0">
                   {s.status === "completed" ? (
-                    <Link href={`/reports/${s.session_id}`} className="text-indigo-600 hover:underline text-xs font-medium">
+                    <a href={getBasePath() + `/reports/${s.session_id}`} onClick={(e) => { e.preventDefault(); hardNav(`/reports/${s.session_id}`); }} className="text-indigo-600 hover:underline text-xs font-medium">
                       View →
-                    </Link>
+                    </a>
                   ) : (
                     <span className="text-gray-300 text-xs">—</span>
                   )}

@@ -1,4 +1,5 @@
-import Link from "next/link";
+"use client";
+import { getBasePath, hardNav } from "@/lib/nav";
 
 export default function LandingPage() {
   return (
@@ -11,18 +12,20 @@ export default function LandingPage() {
         job description and resume, with detailed feedback on every answer.
       </p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <Link
-          href="/login"
+        <a
+          href={getBasePath() + "/login"}
+          onClick={(e) => { e.preventDefault(); hardNav("/login"); }}
           className="bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition"
         >
           Start Free Trial
-        </Link>
-        <Link
-          href="/pricing"
+        </a>
+        <a
+          href={getBasePath() + "/pricing"}
+          onClick={(e) => { e.preventDefault(); hardNav("/pricing"); }}
           className="border border-indigo-600 text-indigo-600 px-8 py-3 rounded-lg font-semibold hover:bg-indigo-50 transition"
         >
           View Pricing
-        </Link>
+        </a>
       </div>
 
       <div className="mt-20 grid grid-cols-1 sm:grid-cols-3 gap-8 text-left">

@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
-import Link from "next/link";
 import { forgotPassword } from "@/lib/api";
+import { getBasePath, hardNav } from "@/lib/nav";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail]     = useState("");
@@ -61,7 +61,7 @@ export default function ForgotPasswordPage() {
               {loading ? "Sending…" : "Send Reset Link"}
             </button>
             <p className="text-center text-xs text-gray-400">
-              <Link href="/login" className="text-indigo-500 hover:underline">Back to Sign In</Link>
+              <a href={getBasePath() + "/login"} onClick={(e) => { e.preventDefault(); hardNav("/login"); }} className="text-indigo-500 hover:underline">Back to Sign In</a>
             </p>
           </form>
         ) : (
@@ -75,7 +75,7 @@ export default function ForgotPasswordPage() {
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-left">
                 <p className="text-xs font-semibold text-yellow-800 mb-2">Dev mode — reset link:</p>
                 <a
-                  href={`/reset-password?token=${token}`}
+                  href={getBasePath() + `/reset-password?token=${token}`}
                   className="text-xs font-mono text-indigo-600 hover:underline break-all"
                 >
                   /reset-password?token={token}

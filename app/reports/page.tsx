@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { apiFetch } from "@/lib/api";
+import { getBasePath, hardNav } from "@/lib/nav";
 import { isLoggedIn, getCurrentUserId, redirectToLogin } from "@/lib/auth";
 
 interface SessionRow {
@@ -59,12 +59,13 @@ export default function ReportsPage() {
           <h1 className="text-3xl font-bold mb-1">Reports</h1>
           <p className="text-gray-400 text-sm">All your interview sessions and performance reports.</p>
         </div>
-        <Link
-          href="/dashboard/start"
+        <a
+          href={getBasePath() + "/dashboard/start"}
+          onClick={(e) => { e.preventDefault(); hardNav("/dashboard/start"); }}
           className="bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition"
         >
           + New Interview
-        </Link>
+        </a>
       </div>
 
       {/* ── Summary strip ── */}
@@ -114,9 +115,9 @@ export default function ReportsPage() {
               : "No sessions match this filter."}
           </p>
           {sessions.length === 0 && (
-            <Link href="/dashboard/start" className="inline-block mt-3 text-indigo-600 text-sm font-medium hover:underline">
+            <a href={getBasePath() + "/dashboard/start"} onClick={(e) => { e.preventDefault(); hardNav("/dashboard/start"); }} className="inline-block mt-3 text-indigo-600 text-sm font-medium hover:underline">
               Start your first interview →
-            </Link>
+            </a>
           )}
         </div>
       ) : (
@@ -170,14 +171,16 @@ export default function ReportsPage() {
                   </span>
                   {isCompleted ? (
                     <a
-                      href={`/reports/${s.session_id}`}
+                      href={getBasePath() + `/reports/${s.session_id}`}
+                      onClick={(e) => { e.preventDefault(); hardNav(`/reports/${s.session_id}`); }}
                       className="text-indigo-600 text-sm font-semibold hover:underline group-hover:text-indigo-700"
                     >
                       View Report →
                     </a>
                   ) : (
                     <a
-                      href={`/interview/${s.session_id}`}
+                      href={getBasePath() + `/interview/${s.session_id}`}
+                      onClick={(e) => { e.preventDefault(); hardNav(`/interview/${s.session_id}`); }}
                       className="text-amber-600 text-sm font-semibold hover:underline"
                     >
                       Resume →

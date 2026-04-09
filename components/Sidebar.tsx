@@ -4,19 +4,7 @@ import { isLoggedIn, logout } from "@/lib/auth";
 import { CONTACT } from "@/lib/contact";
 import { getContactInfo, ContactInfo } from "@/lib/api";
 import { useEffect, useState } from "react";
-
-// Detect basePath dynamically from the current URL so hard-nav links work
-// in both dev (no basePath) and prod (/interviewbot).
-const KNOWN_FIRST_SEGMENTS = new Set(["dashboard","reports","pricing","account","login","interview","admin","auth","forgot-password","reset-password","change-password"]);
-function getBasePath(): string {
-  if (typeof window === "undefined") return "";
-  const first = window.location.pathname.split("/").filter(Boolean)[0] ?? "";
-  return KNOWN_FIRST_SEGMENTS.has(first) ? "" : "/" + first;
-}
-
-function hardNav(path: string) {
-  window.location.href = getBasePath() + path;
-}
+import { getBasePath, hardNav } from "@/lib/nav";
 
 const NAV = [
   {

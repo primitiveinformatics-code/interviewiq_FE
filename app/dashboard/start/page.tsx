@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { isLoggedIn, getCurrentUserId } from "@/lib/auth";
+import { getBasePath, hardNav } from "@/lib/nav";
 import { apiFetch, startSession, getBillingStatus } from "@/lib/api";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -32,7 +32,7 @@ export default function StartInterviewPage() {
   const [error, setError]         = useState("");
 
   useEffect(() => {
-    if (!isLoggedIn()) { router.push("/login"); return; }
+    if (!isLoggedIn()) { hardNav("/login"); return; }
     const uid = getCurrentUserId();
     Promise.all([
       apiFetch<DocRow[]>(`/documents/${uid}`).catch(() => [] as DocRow[]),
@@ -87,7 +87,7 @@ export default function StartInterviewPage() {
       }
       // Store session mode so interview page can enable practice-mode features
       localStorage.setItem("iq_session_mode", mode);
-      router.push(`/interview/${session.session_id}`);
+      hardNav(`/interview/${session.session_id}`);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -103,9 +103,9 @@ export default function StartInterviewPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-12">
-      <Link href="/dashboard" className="text-sm text-gray-400 hover:text-gray-600 mb-6 inline-block">
+      <a href={getBasePath() + "/dashboard"} onClick={(e) => { e.preventDefault(); hardNav("/dashboard"); }} className="text-sm text-gray-400 hover:text-gray-600 mb-6 inline-block">
         ← Back to dashboard
-      </Link>
+      </a>
       <h1 className="text-3xl font-bold mb-2">Start an Interview</h1>
       <p className="text-gray-500 text-sm mb-6">
         Upload your job description and resume, choose a mode, and begin.
@@ -119,7 +119,7 @@ export default function StartInterviewPage() {
       {billing && billing.trial_used && billing.interview_credits === 0 && (
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6 text-amber-700 text-sm">
           You have no credits remaining.{" "}
-          <Link href="/pricing" className="font-semibold underline">Buy credits →</Link>
+          <a href={getBasePath() + "/pricing"} onClick={(e) => { e.preventDefault(); hardNav("/pricing"); }} className="font-semibold underline">Buy credits →</a>
         </div>
       )}
       {billing && billing.interview_credits > 0 && (

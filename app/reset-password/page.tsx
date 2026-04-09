@@ -1,12 +1,11 @@
 "use client";
 import { Suspense, useState, useEffect } from "react";
-import Link from "next/link";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { resetPassword } from "@/lib/api";
+import { getBasePath, hardNav } from "@/lib/nav";
 
 function ResetPasswordForm() {
   const searchParams  = useSearchParams();
-  const router        = useRouter();
   const token         = searchParams.get("token") || "";
 
   const [newPwd, setNewPwd]       = useState("");
@@ -28,7 +27,7 @@ function ResetPasswordForm() {
     try {
       await resetPassword(token, newPwd);
       setSuccess(true);
-      setTimeout(() => router.push("/login"), 2000);
+      setTimeout(() => hardNav("/login"), 2000);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Reset failed");
     } finally {
@@ -87,7 +86,7 @@ function ResetPasswordForm() {
               {loading ? "Saving…" : "Set New Password"}
             </button>
             <p className="text-center text-xs text-gray-400">
-              <Link href="/login" className="text-indigo-500 hover:underline">Back to Sign In</Link>
+              <a href={getBasePath() + "/login"} onClick={(e) => { e.preventDefault(); hardNav("/login"); }} className="text-indigo-500 hover:underline">Back to Sign In</a>
             </p>
           </form>
         )}

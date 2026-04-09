@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { apiFetch } from "@/lib/api";
+import { getBasePath, hardNav } from "@/lib/nav";
 import { isLoggedIn, getCurrentUserId, getUserEmail, redirectToLogin } from "@/lib/auth";
 
 interface SessionRow {
@@ -91,9 +91,9 @@ export default function DashboardPage() {
               {credits} credit{credits !== 1 ? "s" : ""} remaining
             </span>
           )}
-          <Link href="/pricing" className="border border-indigo-200 text-indigo-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-50 transition">
+          <a href={getBasePath() + "/pricing"} onClick={(e) => { e.preventDefault(); hardNav("/pricing"); }} className="border border-indigo-200 text-indigo-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-50 transition">
             Buy Credits
-          </Link>
+          </a>
         </div>
       </div>
 
@@ -113,12 +113,13 @@ export default function DashboardPage() {
               : "Purchase credits to continue practising."}
           </p>
         </div>
-        <Link
-          href={startHref}
+        <a
+          href={getBasePath() + startHref}
+          onClick={(e) => { e.preventDefault(); hardNav(startHref); }}
           className="w-full sm:w-auto bg-white text-indigo-600 font-semibold px-6 py-3 rounded-xl hover:bg-indigo-50 transition text-sm text-center"
         >
           {canStart ? "Start Interview →" : "Buy Credits →"}
-        </Link>
+        </a>
       </div>
 
       {/* ── Analytics ── */}
@@ -178,9 +179,9 @@ export default function DashboardPage() {
                         {s.status}
                       </span>
                       {s.status === "completed" && (
-                        <Link href={`/reports/${s.session_id}`} className="text-indigo-600 text-xs font-medium hover:underline">
+                        <a href={getBasePath() + `/reports/${s.session_id}`} onClick={(e) => { e.preventDefault(); hardNav(`/reports/${s.session_id}`); }} className="text-indigo-600 text-xs font-medium hover:underline">
                           Report →
-                        </Link>
+                        </a>
                       )}
                     </div>
                   </div>

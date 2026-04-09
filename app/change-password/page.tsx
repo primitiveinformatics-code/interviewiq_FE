@@ -1,11 +1,10 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { changePassword } from "@/lib/api";
 import { isLoggedIn, redirectToLogin } from "@/lib/auth";
+import { hardNav } from "@/lib/nav";
 
 export default function ChangePasswordPage() {
-  const router = useRouter();
 
   const [current, setCurrent]   = useState("");
   const [newPwd, setNewPwd]     = useState("");
@@ -28,7 +27,7 @@ export default function ChangePasswordPage() {
     try {
       await changePassword(current, newPwd);
       setSuccess(true);
-      setTimeout(() => router.push("/dashboard"), 2000);
+      setTimeout(() => hardNav("/dashboard"), 2000);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
